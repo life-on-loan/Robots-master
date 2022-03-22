@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.*;
@@ -147,17 +146,16 @@ public class MainApplicationFrame extends JFrame
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
 
-        JMenu exMenu = new JMenu("Закрыть");
-        exMenu.setMnemonic(KeyEvent.VK_Q);
-        exMenu.setActionCommand("quit");
-        exMenu.addActionListener((event) -> onClose());
+        JMenu exitMenu = new JMenu("Закрыть");
+        exitMenu.setMnemonic(KeyEvent.VK_Q);
+        exitMenu.addActionListener((event) -> onClose());
         {
-            JMenuItem addLogMessageItem = new JMenuItem("Выйти", KeyEvent.VK_Q);
-            addLogMessageItem.addActionListener((event) -> onClose());
-            exMenu.add(addLogMessageItem);
+            JMenuItem addExitMessageItem = new JMenuItem("Выйти", KeyEvent.VK_Q);
+            addExitMessageItem.addActionListener((event) -> onClose());
+            exitMenu.add(addExitMessageItem);
         }
 
-        menuBar.add(exMenu);
+        menuBar.add(exitMenu);
         return menuBar;
     }
 
