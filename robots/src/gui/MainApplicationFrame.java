@@ -38,7 +38,7 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
 
-        setJMenuBar(createMenuBar());
+        setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
@@ -59,7 +59,7 @@ public class MainApplicationFrame extends JFrame
         frame.setVisible(true);
     }
 
-    protected JMenuBar createMenuBar() {
+    /*protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
         //Set up the lone menu.
@@ -86,7 +86,7 @@ public class MainApplicationFrame extends JFrame
         menu.add(menuItem);
 
         return menuBar;
-    }
+    }*/
 
     private void onClose() {
         UIManager.put("OptionPane.yesButtonText", "Да");
@@ -146,6 +146,18 @@ public class MainApplicationFrame extends JFrame
 
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
+
+        JMenu exMenu = new JMenu("Закрыть");
+        exMenu.setMnemonic(KeyEvent.VK_Q);
+        exMenu.setActionCommand("quit");
+        exMenu.addActionListener((event) -> onClose());
+        {
+            JMenuItem addLogMessageItem = new JMenuItem("Выйти", KeyEvent.VK_Q);
+            addLogMessageItem.addActionListener((event) -> onClose());
+            exMenu.add(addLogMessageItem);
+        }
+
+        menuBar.add(exMenu);
         return menuBar;
     }
 
