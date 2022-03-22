@@ -1,13 +1,13 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
 import log.Logger;
-
 /**
  * Что требуется сделать:
  * 1. Метод создания меню перегружен функционалом и трудно читается.
@@ -29,7 +29,6 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
@@ -38,7 +37,13 @@ public class MainApplicationFrame extends JFrame
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);///
+        WindowAdapter windowAdapter = new WindowAdapter() {
+            public void windowClosing(WindowEvent event) {
+                onCloseConfirmation(event);
+            }
+        };
+        addWindowListener(windowAdapter);
     }
 
     protected LogWindow createLogWindow()
@@ -60,12 +65,10 @@ public class MainApplicationFrame extends JFrame
 
     /*protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-
         //Set up the lone menu.
         JMenu menu = new JMenu("Документ");
         menu.setMnemonic(KeyEvent.VK_D);
         menuBar.add(menu);
-
         //Set up the first menu item.
         JMenuItem menuItem = new JMenuItem("Новый");
         menuItem.setMnemonic(KeyEvent.VK_N);
@@ -74,7 +77,6 @@ public class MainApplicationFrame extends JFrame
         menuItem.setActionCommand("new");
         //menuItem.addActionListener(this);
         menu.add(menuItem);
-
         //Set up the second menu item.
         menuItem = new JMenuItem("Закрыть");
         menuItem.setMnemonic(KeyEvent.VK_Q);
@@ -83,27 +85,8 @@ public class MainApplicationFrame extends JFrame
         menuItem.setActionCommand("quit");
         menuItem.addActionListener((event) -> onClose());
         menu.add(menuItem);
-
         return menuBar;
     }*/
-
-    private void onClose() {
-        UIManager.put("OptionPane.yesButtonText", "Да");
-        UIManager.put("OptionPane.noButtonText", "Нет");
-        int select = JOptionPane.showConfirmDialog(this, "Закрыть программу?", "Программа", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (select == 0)
-            System.exit(0);
-    }
-
-    private JOptionPane createOptionPane()
-    {
-        JOptionPane optionPane = new JOptionPane("TestABC");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        UIManager.put("OptionPane.yesButtonText"   , "Да"    );
-        UIManager.put("OptionPane.noButtonText"    , "Нет"   );
-        UIManager.put("OptionPane.cancelButtonText", "Отмена");
-        return optionPane;
-    }
 
     private JMenuBar generateMenuBar()
     {
@@ -148,15 +131,26 @@ public class MainApplicationFrame extends JFrame
 
         JMenu exitMenu = new JMenu("Закрыть");
         exitMenu.setMnemonic(KeyEvent.VK_Q);
-        exitMenu.addActionListener((event) -> onClose());
         {
             JMenuItem addExitMessageItem = new JMenuItem("Выйти", KeyEvent.VK_Q);
-            addExitMessageItem.addActionListener((event) -> onClose());
+            addExitMessageItem.addActionListener((event) -> Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
+                    new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
             exitMenu.add(addExitMessageItem);
         }
 
         menuBar.add(exitMenu);
         return menuBar;
+    }
+
+    private void onCloseConfirmation(WindowEvent event){
+        UIManager.put("OptionPane.yesButtonText", "Да");
+        UIManager.put("OptionPane.noButtonText", "Нет");
+        int select = JOptionPane.showConfirmDialog(event.getWindow(), "Закрыть программу?", "Программа",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (select  == 0) {
+            event.getWindow().setVisible(false);
+            System.exit(0);
+        }
     }
 
     private void setLookAndFeel(String className)
