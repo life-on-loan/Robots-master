@@ -37,10 +37,10 @@ public class MainApplicationFrame extends JFrame
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);///
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter windowAdapter = new WindowAdapter() {
             public void windowClosing(WindowEvent event) {
-                onCloseConfirmation(event);
+                showConfirmationClosing(event);
             }
         };
         addWindowListener(windowAdapter);
@@ -142,7 +142,10 @@ public class MainApplicationFrame extends JFrame
         return menuBar;
     }
 
-    private void onCloseConfirmation(WindowEvent event){
+    /**
+     * Метод, показывающий окошко согласия на закрытие программы
+     */
+    private void showConfirmationClosing(WindowEvent event){
         UIManager.put("OptionPane.yesButtonText", "Да");
         UIManager.put("OptionPane.noButtonText", "Нет");
         int select = JOptionPane.showConfirmDialog(event.getWindow(), "Закрыть программу?", "Программа",
