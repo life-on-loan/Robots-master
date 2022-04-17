@@ -76,6 +76,7 @@ public class MainApplicationFrame extends JFrame {
      * Метод настраивающий параметры окон
      */
     private void setupFrame(JInternalFrame frame, FrameProperties properties) {
+        desktopPane.add(frame).setVisible(true);
         frame.setLocation(properties.getX(), properties.getY());
         frame.setSize(properties.getWidth(), properties.getHeight());
         try {
@@ -85,7 +86,6 @@ public class MainApplicationFrame extends JFrame {
         } catch (PropertyVetoException e) {
             System.out.println(e.getMessage());
         }
-        desktopPane.add(frame).setVisible(true);
     }
 
     /**
