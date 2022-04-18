@@ -11,11 +11,10 @@ public class FrameProperties {
     private int height;
     private boolean isIcon;
     private boolean isMaximum;
-    private boolean isClosed;
 
     public FrameProperties() {}
 
-    public FrameProperties(FrameNames frameName, int x, int y, int width, int height, boolean isIcon, boolean isMaximum, boolean isClosed) {
+    public FrameProperties(FrameNames frameName, int x, int y, int width, int height, boolean isIcon, boolean isMaximum) {
         this.frameName = frameName;
         this.x = x;
         this.y = y;
@@ -23,7 +22,6 @@ public class FrameProperties {
         this.height = height;
         this.isIcon = isIcon;
         this.isMaximum = isMaximum;
-        this.isClosed = isClosed;
     }
 
     public int getX() {
@@ -72,14 +70,6 @@ public class FrameProperties {
 
     public void setMaximum(boolean maximum) {
         isMaximum = maximum;
-    }
-
-    public boolean isClosed() {
-        return isClosed;
-    }
-
-    public void setClosed(boolean closed) {
-        isClosed = closed;
     }
 
     public FrameNames getFrameName() {

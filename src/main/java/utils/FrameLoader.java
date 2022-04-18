@@ -44,22 +44,7 @@ public class FrameLoader implements AutoCloseable {
      */
     public List<FrameProperties> loadProperties() {
         try {
-            return readValue(fileInputStream.readAllBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("Возникла ошибка при чтении состояния приложения из файла: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Чтение сохранённых параметров окон
-     *
-     * @param content - массив байт для чтения
-     * @return список параметров
-     * @throws RuntimeException - ошибка при чтении объекта при работе с файлом
-     */
-    private List<FrameProperties> readValue(byte[] content) {
-        try {
-            return objectMapper.readValue(content, new TypeReference<List<FrameProperties>>() {});
+            return objectMapper.readValue(fileInputStream.readAllBytes(), new TypeReference<>() {});
         } catch (IOException e) {
             throw new RuntimeException("Возникла ошибка при чтении состояния приложения из файла: " + e.getMessage());
         }

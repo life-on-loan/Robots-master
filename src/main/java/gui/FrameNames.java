@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.stream.Stream;
+
 /**
  * Типы окон
  */
@@ -23,11 +25,6 @@ public enum FrameNames {
      * @return имя окна типа FrameName
      */
     public static FrameNames getTypeByFrameName(String frameNameToGet) {
-        for (FrameNames frameName : values()) {
-            if (frameName.name.equals(frameNameToGet)) {
-                return frameName;
-            }
-        }
-        throw new RuntimeException(String.format("Не найдено окно с именем: %s", frameNameToGet));
+        return Stream.of(values()).filter(n -> n.name.equals(frameNameToGet)).findFirst().get();
     }
 }

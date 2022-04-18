@@ -45,21 +45,7 @@ public class FrameSaver implements AutoCloseable {
      */
     public void write(List<FrameProperties> properties) {
         try {
-            fileOutputStream.write(propertiesToJSON(properties).getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException("Возникла ошибка при записи состояния приложения в файл: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Метод создающий JSON из параметров окна
-     *
-     * @param properties - параметры окна
-     * @return сгенерированный JSON в виде строки
-     */
-    private String propertiesToJSON(List<FrameProperties> properties) {
-        try {
-            return objectWriter.writeValueAsString(properties);
+            fileOutputStream.write(objectWriter.writeValueAsString(properties).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException("Возникла ошибка при записи состояния приложения в файл: " + e.getMessage());
         }

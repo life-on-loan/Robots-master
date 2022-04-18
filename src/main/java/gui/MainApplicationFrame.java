@@ -81,10 +81,9 @@ public class MainApplicationFrame extends JFrame {
         frame.setSize(properties.getWidth(), properties.getHeight());
         try {
             frame.setIcon(properties.isIcon());
-            frame.setClosed(properties.isClosed());
             frame.setMaximum(properties.isMaximum());
         } catch (PropertyVetoException e) {
-            System.out.println(e.getMessage());
+            Logger.error(e.getMessage());
         }
     }
 
@@ -115,8 +114,7 @@ public class MainApplicationFrame extends JFrame {
                 frame.getWidth(),
                 frame.getHeight(),
                 frame.isIcon(),
-                frame.isMaximum(),
-                frame.isClosed()
+                frame.isMaximum()
         );
     }
 
@@ -127,31 +125,6 @@ public class MainApplicationFrame extends JFrame {
         logWindow.pack();
         Logger.debug("Протокол работает");
     }
-
-    /*protected JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        //Set up the lone menu.
-        JMenu menu = new JMenu("Документ");
-        menu.setMnemonic(KeyEvent.VK_D);
-        menuBar.add(menu);
-        //Set up the first menu item.
-        JMenuItem menuItem = new JMenuItem("Новый");
-        menuItem.setMnemonic(KeyEvent.VK_N);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-        menuItem.setActionCommand("new");
-        //menuItem.addActionListener(this);
-        menu.add(menuItem);
-        //Set up the second menu item.
-        menuItem = new JMenuItem("Закрыть");
-        menuItem.setMnemonic(KeyEvent.VK_Q);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-        menuItem.setActionCommand("quit");
-        menuItem.addActionListener((event) -> onClose());
-        menu.add(menuItem);
-        return menuBar;
-    }*/
 
     private JMenuBar generateMenuBar()
     {
