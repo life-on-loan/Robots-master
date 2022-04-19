@@ -25,6 +25,8 @@ public enum FrameNames {
      * @return имя окна типа FrameName
      */
     public static FrameNames getTypeByFrameName(String frameNameToGet) {
-        return Stream.of(values()).filter(n -> n.name.equals(frameNameToGet)).findFirst().get();
+        return Stream.of(values())
+                .filter(n -> n.name.equals(frameNameToGet))
+                .findFirst().get();
     }
 }

@@ -1,5 +1,7 @@
 package gui;
 
+import javax.swing.*;
+
 /**
  * Класс, содержащий параметры для восстановления положения окна
  */
@@ -13,6 +15,23 @@ public class FrameProperties {
     private boolean isMaximum;
 
     public FrameProperties() {}
+
+    /**
+     * Метод создающий параметры окна для сохранения
+     * @param frame - окно
+     * @return параметры окна, собранные в структуру FrameProperties
+     */
+    public static FrameProperties createFrameProperties(JInternalFrame frame) {
+        return new FrameProperties(
+                FrameNames.getTypeByFrameName(frame.getName()),
+                frame.getX(),
+                frame.getY(),
+                frame.getWidth(),
+                frame.getHeight(),
+                frame.isIcon(),
+                frame.isMaximum()
+        );
+    }
 
     public FrameProperties(FrameNames frameName, int x, int y, int width, int height, boolean isIcon, boolean isMaximum) {
         this.frameName = frameName;

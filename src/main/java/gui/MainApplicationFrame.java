@@ -11,8 +11,7 @@ import java.util.List;
 import javax.swing.*;
 
 import log.Logger;
-import utils.FrameLoader;
-import utils.FrameSaver;
+import utils.FrameStateHandler;
 
 /**
  * Что требуется сделать:
@@ -24,6 +23,7 @@ public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
     private final GameWindow gameWindow = new GameWindow();
+    private final FrameStateHandler frameStateHandler = new FrameStateHandler();
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -52,11 +52,9 @@ public class MainApplicationFrame extends JFrame {
      * Метод восстанавливающий положения окон
      */
     private void loadFrames() {
-        if (new File(FrameSaver.SAVED_STATE_PATH).exists()) {
+        if (new File(FrameStateHandler.SAVED_STATE_PATH).exists()) {
             List<FrameProperties> frameProperties;
-            try (FrameLoader frameLoader = new FrameLoader()) {
-                frameProperties = frameLoader.loadProperties();
-            }
+            frameProperties = frameStateHandler.loadProperties();
             for (FrameProperties properties : frameProperties) {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
@@ -92,30 +90,11 @@ public class MainApplicationFrame extends JFrame {
      */
     private void saveFrames() {
         List<FrameProperties> properties = List.of(
-                prepareFrameProperties(logWindow),
-                prepareFrameProperties(gameWindow)
+                FrameProperties.createFrameProperties(logWindow),
+                FrameProperties.createFrameProperties(gameWindow)
         );
 
-        try (FrameSaver frameSaver = new FrameSaver()) {
-            frameSaver.write(properties);
-        }
-    }
-
-    /**
-     * Метод подготавливающий параметры окна для сохранения
-     * @param frame - окно
-     * @return параметры окна, собранные в структуру FrameProperties
-     */
-    private FrameProperties prepareFrameProperties(JInternalFrame frame) {
-        return new FrameProperties(
-                FrameNames.getTypeByFrameName(frame.getName()),
-                frame.getX(),
-                frame.getY(),
-                frame.getWidth(),
-                frame.getHeight(),
-                frame.isIcon(),
-                frame.isMaximum()
-        );
+        frameStateHandler.write(properties);
     }
 
     protected void setupLogWindow(LogWindow logWindow) {
