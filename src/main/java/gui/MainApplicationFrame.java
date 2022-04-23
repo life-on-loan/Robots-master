@@ -1,11 +1,11 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
-import java.io.File;
 import java.util.List;
 
 import javax.swing.*;
@@ -13,12 +13,8 @@ import javax.swing.*;
 import log.Logger;
 import utils.FrameStateHandler;
 
-/**
- * Что требуется сделать:
- * 1. Метод создания меню перегружен функционалом и трудно читается.
- * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
- *
- */
+import static constans.TextConstants.*;
+
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
@@ -26,13 +22,10 @@ public class MainApplicationFrame extends JFrame {
     private final FrameStateHandler frameStateHandler = new FrameStateHandler();
 
     public MainApplicationFrame() {
-        //Make the big window be indented 50 pixels from each edge
-        //of the screen.
+        //Make the big window be indented 50 pixels from each edge of the screen.
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-                screenSize.width  - inset*2,
-                screenSize.height - inset*2);
+        setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
 
         setContentPane(desktopPane);
 
@@ -52,7 +45,7 @@ public class MainApplicationFrame extends JFrame {
      * Метод восстанавливающий положения окон
      */
     private void loadFrames() {
-        if (new File(FrameStateHandler.SAVED_STATE_PATH).exists()) {
+        if (frameStateHandler.isFileExisting()) {
             List<FrameProperties> frameProperties;
             frameProperties = frameStateHandler.loadProperties();
             for (FrameProperties properties : frameProperties) {
@@ -65,7 +58,7 @@ public class MainApplicationFrame extends JFrame {
             setupLogWindow(logWindow);
             desktopPane.add(logWindow).setVisible(true);
 
-            gameWindow.setSize(400,  400);
+            gameWindow.setSize(400, 400);
             desktopPane.add(gameWindow).setVisible(true);
         }
     }
@@ -98,66 +91,116 @@ public class MainApplicationFrame extends JFrame {
     }
 
     protected void setupLogWindow(LogWindow logWindow) {
-        logWindow.setLocation(10,10);
+        logWindow.setLocation(10, 10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug("Протокол работает");
+        Logger.debug(MES_PROTOCOL_WORK);
     }
 
-    private JMenuBar generateMenuBar()
-    {
+    /**
+     * Метод создания панели меню
+     *
+     * @return панель меню
+     */
+    private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+        JMenu lookAndFeelMenu = generateLookAndFeelMenu();
+        JMenu testMenu = generateTestMenu();
+        JMenu exitMenu = generateExitMenu();
+        menuBar.add(lookAndFeelMenu);
+        menuBar.add(testMenu);
+        menuBar.add(exitMenu);
+        return menuBar;
+    }
 
-        lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext()
-            .setAccessibleDescription("Управление режимом отображения приложения");
+    /**
+     * Метод создания пункта меню
+     *
+     * @param itemText - название пункта меню
+     * @param keyEvent - клавиша быстрого доступа
+     * @param listener - слушатель событий
+     * @return пункт вложенного меню
+     */
+    private JMenuItem createNewJMenuItem(String itemText, int keyEvent, ActionListener listener) {
+        JMenuItem newItem = new JMenuItem(itemText, keyEvent);
+        newItem.addActionListener(listener);
+        return newItem;
+    }
+
+    /**
+     * Метод создания вложенного меню
+     *
+     * @param title                 - название вложенного меню
+     * @param keyEvent              - клавиша быстрого доступа
+     * @param accessibleDescription - общее описание вложенного меню
+     * @return вложенное меню
+     */
+    private JMenu createNewJMenu(String title, int keyEvent, String accessibleDescription) {
+        JMenu newMenuBar = new JMenu(title);
+        newMenuBar.setMnemonic(keyEvent);
+        newMenuBar.getAccessibleContext().setAccessibleDescription(accessibleDescription);
+        return newMenuBar;
+    }
+
+    /**
+     * Метод создания меню для режимов отображения
+     *
+     * @return вложенное меню режимов отображения
+     */
+    private JMenu generateLookAndFeelMenu() {
+        JMenu lookAndFeelMenu = createNewJMenu(MES_MODE_MAPPING, KeyEvent.VK_V,
+                MES_MANAGEMENT_MODE_MAPPING);
 
         {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
-            systemLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                this.invalidate();
-            });
+            JMenuItem systemLookAndFeel = createNewJMenuItem(SYSTEM_SCHEME, KeyEvent.VK_S,
+                    (event) -> {
+                        setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                        this.invalidate();
+                    });
             lookAndFeelMenu.add(systemLookAndFeel);
         }
 
         {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
-            crossplatformLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                this.invalidate();
-            });
+            JMenuItem crossplatformLookAndFeel = createNewJMenuItem(UNIVERSAL_SCHEME, KeyEvent.VK_S,
+                    (event) -> {
+                        setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                        this.invalidate();
+                    });
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
+        return lookAndFeelMenu;
+    }
 
-        JMenu testMenu = new JMenu("Тесты");
-        testMenu.setMnemonic(KeyEvent.VK_T);
-        testMenu.getAccessibleContext()
-            .setAccessibleDescription("Тестовые команды");
-
+    /**
+     * Метод создания меню для раздела тестов
+     *
+     * @return вложенное меню тестов
+     */
+    private JMenu generateTestMenu() {
+        JMenu testMenu = createNewJMenu(TESTS, KeyEvent.VK_T, TESTS_COMMANDS);
         {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener((event) -> Logger.debug("Новая строка"));
+            JMenuItem addLogMessageItem = createNewJMenuItem(MES_TO_LOG, KeyEvent.VK_S, (event) -> Logger.debug(NEW_STRING));
             testMenu.add(addLogMessageItem);
         }
+        return testMenu;
+    }
 
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
-
-        JMenu exitMenu = new JMenu("Закрыть");
+    /**
+     * Метод создания меню для выхода
+     *
+     * @return вложенное меню выхода
+     */
+    private JMenu generateExitMenu() {
+        JMenu exitMenu = new JMenu(CLOSE);
         exitMenu.setMnemonic(KeyEvent.VK_Q);
         {
-            JMenuItem addExitMessageItem = new JMenuItem("Выйти", KeyEvent.VK_Q);
-            addExitMessageItem.addActionListener(
-                (event) -> Toolkit.getDefaultToolkit().getSystemEventQueue()
-                    .postEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+            JMenuItem addExitMessageItem = new JMenuItem(EXIT, KeyEvent.VK_Q);
+            addExitMessageItem.addActionListener((event) -> Toolkit.getDefaultToolkit()
+                    .getSystemEventQueue().postEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
             exitMenu.add(addExitMessageItem);
         }
-
-        menuBar.add(exitMenu);
-        return menuBar;
+        return exitMenu;
     }
 
     /**
@@ -167,8 +210,8 @@ public class MainApplicationFrame extends JFrame {
         UIManager.put("OptionPane.yesButtonText", "Да");
         UIManager.put("OptionPane.noButtonText", "Нет");
         int select = JOptionPane.showConfirmDialog(
-            event.getWindow(), "Закрыть программу?", "Программа",
-            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                event.getWindow(), QUESTION_EXIT, PROGRAM,
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (select == 0) {
             saveFrames();
             event.getWindow().setVisible(false);
@@ -181,7 +224,7 @@ public class MainApplicationFrame extends JFrame {
             UIManager.setLookAndFeel(className);
             SwingUtilities.updateComponentTreeUI(this);
         } catch (ClassNotFoundException | InstantiationException
-            | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                | IllegalAccessException | UnsupportedLookAndFeelException e) {
             // just ignore
         }
     }

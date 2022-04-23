@@ -14,14 +14,17 @@ public class FrameProperties {
     private boolean isIcon;
     private boolean isMaximum;
 
-    public FrameProperties() {}
+    /**
+     * Дефолтный конструктор необходимый для десериализации
+     */
+    FrameProperties() {}
 
     /**
      * Метод создающий параметры окна для сохранения
      * @param frame - окно
      * @return параметры окна, собранные в структуру FrameProperties
      */
-    public static FrameProperties createFrameProperties(JInternalFrame frame) {
+    static FrameProperties createFrameProperties(JInternalFrame frame) {
         return new FrameProperties(
                 FrameNames.getTypeByFrameName(frame.getName()),
                 frame.getX(),

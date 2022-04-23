@@ -8,13 +8,22 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * Класс, отвечающий за запись и чтение из файла
+ */
 public class FrameStateHandler {
     /** Путь до файла с параметрами окон в корневом каталоге пользователя */
-    public static final String SAVED_STATE_PATH = System.getProperty("user.home") + File.separator + "javaRobotsState.txt";
+    private static final String SAVED_STATE_PATH = System.getProperty("user.home") + File.separator + "javaRobotsState.txt";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public FrameStateHandler(){}
+    /**
+     * Метод, проверяющий существование файла в заданной директории
+     * @return истинность или ложность существования файла
+     */
+    public boolean isFileExisting() {
+        return new File(SAVED_STATE_PATH).exists();
+    }
 
     /**
      * Метод загрузки параметров из файла
