@@ -13,7 +13,7 @@ import javax.swing.*;
 import log.Logger;
 import utils.FrameStateHandler;
 
-import static constans.TextConstants.*;
+import static constants.TextConstants.*;
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
@@ -31,7 +31,7 @@ public class MainApplicationFrame extends JFrame {
 
         loadFrames();
 
-        setJMenuBar(generateMenuBar());
+        setJMenuBar(createMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter windowAdapter = new WindowAdapter() {
             public void windowClosing(WindowEvent event) {
@@ -42,12 +42,11 @@ public class MainApplicationFrame extends JFrame {
     }
 
     /**
-     * Метод восстанавливающий положения окон
+     * Метод, восстанавливающий положения окон
      */
     private void loadFrames() {
-        if (frameStateHandler.isFileExisting()) {
-            List<FrameProperties> frameProperties;
-            frameProperties = frameStateHandler.loadProperties();
+        List<FrameProperties> frameProperties = frameStateHandler.loadProperties();
+        if (frameProperties.size() != 0) {
             for (FrameProperties properties : frameProperties) {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
@@ -64,7 +63,7 @@ public class MainApplicationFrame extends JFrame {
     }
 
     /**
-     * Метод настраивающий параметры окон
+     * Метод, настраивающий параметры окон
      */
     private void setupFrame(JInternalFrame frame, FrameProperties properties) {
         desktopPane.add(frame).setVisible(true);
@@ -79,7 +78,7 @@ public class MainApplicationFrame extends JFrame {
     }
 
     /**
-     * Метод сохраняющий положения окон
+     * Метод, сохраняющий положения окон
      */
     private void saveFrames() {
         List<FrameProperties> properties = List.of(
@@ -103,11 +102,11 @@ public class MainApplicationFrame extends JFrame {
      *
      * @return панель меню
      */
-    private JMenuBar generateMenuBar() {
+    private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu lookAndFeelMenu = generateLookAndFeelMenu();
-        JMenu testMenu = generateTestMenu();
-        JMenu exitMenu = generateExitMenu();
+        JMenu lookAndFeelMenu = createLookAndFeelMenu();
+        JMenu testMenu = createTestMenu();
+        JMenu exitMenu = createExitMenu();
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
         menuBar.add(exitMenu);
@@ -148,7 +147,7 @@ public class MainApplicationFrame extends JFrame {
      *
      * @return вложенное меню режимов отображения
      */
-    private JMenu generateLookAndFeelMenu() {
+    private JMenu createLookAndFeelMenu() {
         JMenu lookAndFeelMenu = createNewJMenu(MES_MODE_MAPPING, KeyEvent.VK_V,
                 MES_MANAGEMENT_MODE_MAPPING);
 
@@ -177,7 +176,7 @@ public class MainApplicationFrame extends JFrame {
      *
      * @return вложенное меню тестов
      */
-    private JMenu generateTestMenu() {
+    private JMenu createTestMenu() {
         JMenu testMenu = createNewJMenu(TESTS, KeyEvent.VK_T, TESTS_COMMANDS);
         {
             JMenuItem addLogMessageItem = createNewJMenuItem(MES_TO_LOG, KeyEvent.VK_S, (event) -> Logger.debug(NEW_STRING));
@@ -191,7 +190,7 @@ public class MainApplicationFrame extends JFrame {
      *
      * @return вложенное меню выхода
      */
-    private JMenu generateExitMenu() {
+    private JMenu createExitMenu() {
         JMenu exitMenu = new JMenu(CLOSE);
         exitMenu.setMnemonic(KeyEvent.VK_Q);
         {
