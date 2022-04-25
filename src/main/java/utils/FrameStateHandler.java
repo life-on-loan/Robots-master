@@ -17,17 +17,12 @@ public class FrameStateHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Поле, проверяющее существование файла в заданной директории
-     */
-    private boolean isFileExisting = new File(SAVED_STATE_PATH).exists();
-
-    /**
      * Метод загрузки параметров из файла
      * @return лист параметров
      * @throws RuntimeException - ошибка при чтении объекта при работе с файлом
      */
     public List<FrameProperties> loadProperties() {
-        if (isFileExisting) {
+        if (new File(SAVED_STATE_PATH).exists()) {
             try (FileInputStream fileInputStream = new FileInputStream(SAVED_STATE_PATH)) {
                 return objectMapper.readValue(fileInputStream.readAllBytes(), new TypeReference<>() {
                 });

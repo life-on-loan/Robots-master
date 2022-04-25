@@ -36,7 +36,7 @@ public class FrameProperties {
         );
     }
 
-    public FrameProperties(FrameNames frameName, int x, int y, int width, int height, boolean isIcon, boolean isMaximum) {
+    private FrameProperties(FrameNames frameName, int x, int y, int width, int height, boolean isIcon, boolean isMaximum) {
         this.frameName = frameName;
         this.x = x;
         this.y = y;

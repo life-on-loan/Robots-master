@@ -46,7 +46,7 @@ public class MainApplicationFrame extends JFrame {
      */
     private void loadFrames() {
         List<FrameProperties> frameProperties = frameStateHandler.loadProperties();
-        if (frameProperties.size() != 0) {
+        if (frameProperties != null) {
             for (FrameProperties properties : frameProperties) {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
