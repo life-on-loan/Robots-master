@@ -16,9 +16,11 @@ import utils.FrameStateHandler;
 import static constants.TextConstants.*;
 
 public class MainApplicationFrame extends JFrame {
+    private final GameModel model = new GameModel();
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final InfoWindow infoWindow = new InfoWindow(model);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-    private final GameWindow gameWindow = new GameWindow();
+    private final GameWindow gameWindow = new GameWindow(model);
     private final FrameStateHandler frameStateHandler = new FrameStateHandler();
 
     public MainApplicationFrame() {
@@ -51,6 +53,7 @@ public class MainApplicationFrame extends JFrame {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
                     case LOG_WINDOW -> setupFrame(logWindow, properties);
+                    case INFO_WINDOW -> setupFrame(infoWindow, properties);
                 }
             }
         } else {
@@ -59,6 +62,10 @@ public class MainApplicationFrame extends JFrame {
 
             gameWindow.setSize(400, 400);
             desktopPane.add(gameWindow).setVisible(true);
+
+            infoWindow.setSize(250,  180);
+            infoWindow.setLocation(450, 0);
+            desktopPane.add(infoWindow).setVisible(true);
         }
     }
 
@@ -83,7 +90,8 @@ public class MainApplicationFrame extends JFrame {
     private void saveFrames() {
         List<FrameProperties> properties = List.of(
                 FrameProperties.createFrameProperties(logWindow),
-                FrameProperties.createFrameProperties(gameWindow)
+                FrameProperties.createFrameProperties(gameWindow),
+                FrameProperties.createFrameProperties(infoWindow)
         );
 
         frameStateHandler.write(properties);

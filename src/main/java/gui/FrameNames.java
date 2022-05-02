@@ -7,7 +7,8 @@ import java.util.stream.Stream;
  */
 public enum FrameNames {
     LOG_WINDOW("log"),
-    GAME_WINDOW("game");
+    GAME_WINDOW("game"),
+    INFO_WINDOW("info");
 
     private final String name;
 
