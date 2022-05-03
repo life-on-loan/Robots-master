@@ -10,12 +10,12 @@ import java.util.Observer;
  */
 public class InfoWindow extends JDialog implements Observer {
 
-    private GameModel mModel;
+    private final GameModel mModel;
     private final Label mRobotX = new Label();
     private final Label mRobotY = new Label();
 
     public InfoWindow(GameModel model) {
-        super(new JFrame(), "Координаты");
+        super();
         setName(FrameNames.INFO_WINDOW.getName());
 
         mModel = model;

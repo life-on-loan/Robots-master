@@ -53,7 +53,7 @@ public class MainApplicationFrame extends JFrame {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
                     case LOG_WINDOW -> setupFrame(logWindow, properties);
-                    case INFO_WINDOW -> setupFrame(infoWindow);
+                    case INFO_WINDOW -> setupFrame(infoWindow, properties);
                 }
             }
         } else {
@@ -63,7 +63,9 @@ public class MainApplicationFrame extends JFrame {
             gameWindow.setSize(400, 400);
             desktopPane.add(gameWindow).setVisible(true);
 
-            setupFrame(infoWindow);
+            infoWindow.pack();
+            infoWindow.setVisible(true);
+            infoWindow.setAlwaysOnTop(true);
         }
     }
 
@@ -82,10 +84,12 @@ public class MainApplicationFrame extends JFrame {
         }
     }
 
-    private void setupFrame(JDialog frame) {
+    private void setupFrame(JDialog frame, FrameProperties properties) {
         frame.pack();
         frame.setVisible(true);
         frame.setAlwaysOnTop(true);
+        frame.setPreferredSize(new Dimension(properties.getHeight(), properties.getWidth()));
+        frame.setLocation(properties.getX(), properties.getY());
     }
 
     /**

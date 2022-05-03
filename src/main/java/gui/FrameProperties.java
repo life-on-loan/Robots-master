@@ -42,7 +42,9 @@ public class FrameProperties {
                 frame.getX(),
                 frame.getY(),
                 frame.getWidth(),
-                frame.getHeight()
+                frame.getHeight(),
+                false,
+                false
         );
     }
 
@@ -54,14 +56,6 @@ public class FrameProperties {
         this.height = height;
         this.isIcon = isIcon;
         this.isMaximum = isMaximum;
-    }
-
-    private FrameProperties(FrameNames frameName, int x, int y, int width, int height) {
-        this.frameName = frameName;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
     }
 
     public int getX() {
