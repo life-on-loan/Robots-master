@@ -23,7 +23,6 @@ public class InfoWindow extends JDialog implements Observer {
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.setPreferredSize(new Dimension(250, 100));
 
         addLine(panel, "Robot X", mRobotX);
         addLine(panel, "Robot Y", mRobotY);

@@ -66,6 +66,7 @@ public class MainApplicationFrame extends JFrame {
             infoWindow.pack();
             infoWindow.setVisible(true);
             infoWindow.setAlwaysOnTop(true);
+            infoWindow.setBounds(400, 50, 210, 110);
         }
     }
 
@@ -88,8 +89,7 @@ public class MainApplicationFrame extends JFrame {
         frame.pack();
         frame.setVisible(true);
         frame.setAlwaysOnTop(true);
-        frame.setPreferredSize(new Dimension(properties.getHeight(), properties.getWidth()));
-        frame.setLocation(properties.getX(), properties.getY());
+        frame.setBounds(properties.getX(),properties.getY(),properties.getWidth(),properties.getHeight());
     }
 
     /**
