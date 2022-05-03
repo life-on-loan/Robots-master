@@ -5,6 +5,8 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
+import static constants.TextConstants.MOVE_ROBOT;
+
 /**
  * Класс окна отображения координат робота и цели
  */
@@ -18,8 +20,7 @@ public class InfoWindow extends JInternalFrame implements Observer {
     private final Label mTargetY = new Label();
     private final Label mAngleToTarget = new Label();
 
-    public InfoWindow(GameModel model)
-    {
+    public InfoWindow(GameModel model) {
         super("Координаты робота", true, true, true, true);
         setName(FrameNames.INFO_WINDOW.getName());
 
@@ -65,7 +66,7 @@ public class InfoWindow extends JInternalFrame implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (arg.equals("move robot")) {
+        if (arg.equals(MOVE_ROBOT)) {
             double robotX = mModel.getRobotPositionX();
             double robotY = mModel.getRobotPositionY();
             double targetX = mModel.getTargetPositionX();

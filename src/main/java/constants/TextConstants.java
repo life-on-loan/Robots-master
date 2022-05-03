@@ -17,4 +17,6 @@ public class TextConstants {
     public static final String EXIT = "Выйти";
     public static final String QUESTION_EXIT = "Закрыть программу?";
     public static final String PROGRAM = "Программа";
+    public static final String REPAINT = "repaint";
+    public static final String MOVE_ROBOT = "move robot";
 }

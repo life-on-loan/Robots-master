@@ -6,6 +6,9 @@ import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static constants.TextConstants.MOVE_ROBOT;
+import static constants.TextConstants.REPAINT;
+
 /**
  * Класс, описывающий модель игры
  */
@@ -62,7 +65,7 @@ public class GameModel extends Observable
             public void run()
             {
                 setChanged();
-                notifyObservers("repaint");
+                notifyObservers(REPAINT);
                 clearChanged();
             }
         }, 0, 10);
@@ -74,57 +77,54 @@ public class GameModel extends Observable
             @Override
             public void run()
             {
-                onModelUpdateEvent();
                 setChanged();
-                notifyObservers("move robot");
+                updateDataMovingRobot();
+                notifyObservers(MOVE_ROBOT);
                 clearChanged();
             }
         }, 0, 10);
     }
 
-    private static double distance(double x1, double y1, double x2, double y2)
-    {
+    private static double distance(double x1, double y1, double x2, double y2) {
         double diffX = x1 - x2;
         double diffY = y1 - y2;
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 
-    public static double angleTo(double fromX, double fromY, double toX, double toY)
-    {
+    public static double angleTo(double fromX, double fromY, double toX, double toY) {
         double diffX = toX - fromX;
         double diffY = toY - fromY;
         return AdditionalMathMethods.asNormalizedRadians(Math.atan2(diffY, diffX));
     }
 
-    protected void onModelUpdateEvent()
-    {
+    protected void updateDataMovingRobot() {
         double distance = distance(m_targetPositionX, m_targetPositionY, m_robotPositionX, m_robotPositionY);
         if (distance <= 0.5) {
             return;
         }
         double angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
-        double differentRobotAndTargetDitection = angleToTarget - m_robotDirection;
-        double inaccuracy = 0.025d; //погрешность
-        if ((differentRobotAndTargetDitection >= Math.PI)
-                || (differentRobotAndTargetDitection < inaccuracy && differentRobotAndTargetDitection >= -Math.PI)) {
+        double differentRobotAndTargetDirection = angleToTarget - m_robotDirection;
+        double inaccuracy = 0.075d; //погрешность
+        if ((differentRobotAndTargetDirection >= Math.PI)
+                || (differentRobotAndTargetDirection < inaccuracy && differentRobotAndTargetDirection >= -Math.PI)) {
             angularVelocity = -maxAngularVelocity;
         }
-        if ((differentRobotAndTargetDitection < -Math.PI)
-                || (differentRobotAndTargetDitection > inaccuracy && differentRobotAndTargetDitection < Math.PI)) {
+        if ((differentRobotAndTargetDirection < -Math.PI)
+                || (differentRobotAndTargetDirection > inaccuracy && differentRobotAndTargetDirection < Math.PI)) {
             angularVelocity = maxAngularVelocity;
         }
         double duration = 10;
-        if (Math.abs(differentRobotAndTargetDitection) > 0.5d) {
+        if (Math.abs(differentRobotAndTargetDirection) > 0.5d) {
             duration = 5;
         }
 
-        moveRobot(maxVelocity, angularVelocity, duration);
+        moveRobot(angularVelocity, duration);
     }
 
-    private void moveRobot(double velocity, double angularVelocity, double duration)
+    private void moveRobot(double angularVelocity, double duration)
     {
-        velocity = AdditionalMathMethods.applyLimits(velocity, 0, maxVelocity);
+        double velocity = maxVelocity;
         angularVelocity = AdditionalMathMethods.applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
         double newX = m_robotPositionX + velocity / angularVelocity *
                 (Math.sin(m_robotDirection + angularVelocity * duration) - Math.sin(m_robotDirection));
