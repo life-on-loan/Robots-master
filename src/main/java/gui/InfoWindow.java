@@ -8,27 +8,28 @@ import java.util.Observer;
 /**
  * Класс окна отображения координат робота и цели
  */
-public class InfoWindow extends JInternalFrame implements Observer {
+public class InfoWindow extends JDialog implements Observer {
 
-    private final GameModel mModel;
+    private GameModel mModel;
     private final Label mRobotX = new Label();
     private final Label mRobotY = new Label();
 
     public InfoWindow(GameModel model) {
-        super("Координаты робота", true, true, true, true);
+        super(new JFrame(), "Координаты");
         setName(FrameNames.INFO_WINDOW.getName());
 
         mModel = model;
-        mModel.addObserver(this);
+        model.addObserver(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        panel.setPreferredSize(new Dimension(250, 100));
 
         addLine(panel, "Robot X", mRobotX);
         addLine(panel, "Robot Y", mRobotY);
 
         getContentPane().add(panel);
+        setVisible(true);
         pack();
     }
 
@@ -56,10 +57,7 @@ public class InfoWindow extends JInternalFrame implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-        double robotX = mModel.getRobotPositionX();
-        double robotY = mModel.getRobotPositionY();
-
-        mRobotX.setText(String.format("%.2f", robotX));
-        mRobotY.setText(String.format("%.2f", robotY));
+        mRobotX.setText(String.format("%.2f", mModel.getRobotPositionX()));
+        mRobotY.setText(String.format("%.2f", mModel.getRobotPositionY()));
     }
 }

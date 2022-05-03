@@ -12,7 +12,7 @@ import java.util.TimerTask;
 public class GameModel extends Observable
 {
     private static final double maxVelocity = 0.1;
-    private static final double maxAngularVelocity = 0.01;
+    private static final double maxAngularVelocity = 0.001;
 
     private volatile double m_robotPositionX = 100;
     private volatile double m_robotPositionY = 100;
@@ -86,13 +86,15 @@ public class GameModel extends Observable
      */
     protected void updateDataMovingRobot() {
         double distance = distance(m_targetPositionX, m_targetPositionY, m_robotPositionX, m_robotPositionY);
-        if (distance <= 0.5) {
+        if (distance < 0.5) {
             return;
         }
         angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
+
+        //место ошибки в поведении робота
         double differentRobotAndTargetDirection = angleToTarget - m_robotDirection;
-        double inaccuracy = 0.075d; //погрешность
+        double inaccuracy = 0.025d; //погрешность
         if ((differentRobotAndTargetDirection >= Math.PI)
                 || (differentRobotAndTargetDirection < inaccuracy && differentRobotAndTargetDirection >= -Math.PI)) {
             angularVelocity = -maxAngularVelocity;
@@ -101,12 +103,9 @@ public class GameModel extends Observable
                 || (differentRobotAndTargetDirection > inaccuracy && differentRobotAndTargetDirection < Math.PI)) {
             angularVelocity = maxAngularVelocity;
         }
-        double duration = 10;
-        if (Math.abs(differentRobotAndTargetDirection) > 0.5d) {
-            duration = 5;
-        }
+
+        moveRobot(angularVelocity, 10);
         setChanged();
-        moveRobot(angularVelocity, duration);
     }
 
     private void moveRobot(double angularVelocity, double duration)

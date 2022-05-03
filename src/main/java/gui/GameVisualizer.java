@@ -12,6 +12,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
@@ -22,9 +24,25 @@ public class GameVisualizer extends JPanel implements Observer
 {
     private GameModel mModel;
 
+    private final Timer m_timer = initTimer();
+
+    private static Timer initTimer() {
+        return new Timer("events generator", true);
+    }
+
     public GameVisualizer(GameModel model) {
         mModel = model;
         mModel.addObserver(this);
+
+        //отрисовка робота и цели, даже если окно не активно
+        m_timer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                onRedrawEvent();
+            }
+        }, 0, 50);
 
         addMouseListener(new MouseAdapter()
         {
@@ -32,6 +50,7 @@ public class GameVisualizer extends JPanel implements Observer
             public void mouseClicked(MouseEvent e)
             {
                 setTargetPosition(e.getPoint());
+                onRedrawEvent();
                 repaint();
             }
         });
