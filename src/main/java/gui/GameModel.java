@@ -24,6 +24,11 @@ public class GameModel extends Observable
     private volatile int m_targetPositionX = 150;
     private volatile int m_targetPositionY = 100;
 
+    private volatile double angleToTarget;
+    public double getAngleToTarget() {
+        return angleToTarget;
+    }
+
     public double getRobotPositionX() {
         return m_robotPositionX;
     }
@@ -102,7 +107,7 @@ public class GameModel extends Observable
         if (distance <= 0.5) {
             return;
         }
-        double angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
+        angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
         double differentRobotAndTargetDirection = angleToTarget - m_robotDirection;
         double inaccuracy = 0.075d; //погрешность

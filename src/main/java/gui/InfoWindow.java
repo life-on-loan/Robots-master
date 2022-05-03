@@ -71,7 +71,7 @@ public class InfoWindow extends JInternalFrame implements Observer {
             double robotY = mModel.getRobotPositionY();
             double targetX = mModel.getTargetPositionX();
             double targetY = mModel.getTargetPositionY();
-            double angleToTarget = GameModel.angleTo(robotX, robotY, targetX, targetY);
+            double angleToTarget = mModel.getAngleToTarget();
 
             mRobotX.setText(String.format("%.2f", robotX));
             mRobotY.setText(String.format("%.2f", robotY));
