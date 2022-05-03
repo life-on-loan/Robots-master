@@ -25,9 +25,6 @@ public class GameModel extends Observable
     private volatile int m_targetPositionY = 100;
 
     private volatile double angleToTarget;
-    public double getAngleToTarget() {
-        return angleToTarget;
-    }
 
     public double getRobotPositionX() {
         return m_robotPositionX;

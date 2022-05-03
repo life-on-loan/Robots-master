@@ -15,10 +15,6 @@ public class InfoWindow extends JInternalFrame implements Observer {
     private final GameModel mModel;
     private final Label mRobotX = new Label();
     private final Label mRobotY = new Label();
-    private final Label mDirection = new Label();
-    private final Label mTargetX = new Label();
-    private final Label mTargetY = new Label();
-    private final Label mAngleToTarget = new Label();
 
     public InfoWindow(GameModel model) {
         super("Координаты робота", true, true, true, true);
@@ -33,10 +29,6 @@ public class InfoWindow extends JInternalFrame implements Observer {
 
         addLine(panel, "Robot X", mRobotX);
         addLine(panel, "Robot Y", mRobotY);
-        addLine(panel, "Target X", mTargetX);
-        addLine(panel, "Target Y", mTargetY);
-        addLine(panel, "Direction", mDirection);
-        addLine(panel, "Angle to target", mAngleToTarget);
 
         getContentPane().add(panel);
         pack();
@@ -69,16 +61,9 @@ public class InfoWindow extends JInternalFrame implements Observer {
         if (arg.equals(MOVE_ROBOT)) {
             double robotX = mModel.getRobotPositionX();
             double robotY = mModel.getRobotPositionY();
-            double targetX = mModel.getTargetPositionX();
-            double targetY = mModel.getTargetPositionY();
-            double angleToTarget = mModel.getAngleToTarget();
 
             mRobotX.setText(String.format("%.2f", robotX));
             mRobotY.setText(String.format("%.2f", robotY));
-            mTargetX.setText(String.format("%.2f", targetX));
-            mTargetY.setText(String.format("%.2f", targetY));
-            mDirection.setText(String.format("%.2f", mModel.getRobotDirection()));
-            mAngleToTarget.setText(String.format("%.2f", angleToTarget));
         }
     }
 }
