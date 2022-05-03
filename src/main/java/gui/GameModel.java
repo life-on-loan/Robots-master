@@ -6,9 +6,6 @@ import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static constants.TextConstants.MOVE_ROBOT;
-import static constants.TextConstants.REPAINT;
-
 /**
  * Класс, описывающий модель игры
  */
@@ -61,28 +58,13 @@ public class GameModel extends Observable
         m_timer.schedule(new TimerTask()
         {
             /**
-             * Уведомление наблюдателя, ответсвенного за отрисовку
+             * Уведомление наблюдателя, ответственного за вывод координат
              */
             @Override
             public void run()
             {
-                setChanged();
-                notifyObservers(REPAINT);
-                clearChanged();
-            }
-        }, 0, 10);
-        m_timer.schedule(new TimerTask()
-        {
-            /**
-             * Уведомление наблюдателя, ответсвенного за вывод координат
-             */
-            @Override
-            public void run()
-            {
-                setChanged();
                 updateDataMovingRobot();
-                notifyObservers(MOVE_ROBOT);
-                clearChanged();
+                notifyObservers();
             }
         }, 0, 10);
     }
@@ -99,6 +81,9 @@ public class GameModel extends Observable
         return AdditionalMathMethods.asNormalizedRadians(Math.atan2(diffY, diffX));
     }
 
+    /**
+     * Метод изменения координат робота в процессе достижения им цели
+     */
     protected void updateDataMovingRobot() {
         double distance = distance(m_targetPositionX, m_targetPositionY, m_robotPositionX, m_robotPositionY);
         if (distance <= 0.5) {
@@ -120,7 +105,7 @@ public class GameModel extends Observable
         if (Math.abs(differentRobotAndTargetDirection) > 0.5d) {
             duration = 5;
         }
-
+        setChanged();
         moveRobot(angularVelocity, duration);
     }
 

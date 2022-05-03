@@ -15,8 +15,6 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import static constants.TextConstants.REPAINT;
-
 /**
  * Класс, ответственный за отрисовку перемещения робота
  */
@@ -103,8 +101,6 @@ public class GameVisualizer extends JPanel implements Observer
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (arg.equals(REPAINT)) {
-            onRedrawEvent();
-        }
+        onRedrawEvent();
     }
 }

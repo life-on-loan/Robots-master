@@ -5,8 +5,6 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
-import static constants.TextConstants.MOVE_ROBOT;
-
 /**
  * Класс окна отображения координат робота и цели
  */
@@ -58,12 +56,10 @@ public class InfoWindow extends JInternalFrame implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (arg.equals(MOVE_ROBOT)) {
-            double robotX = mModel.getRobotPositionX();
-            double robotY = mModel.getRobotPositionY();
+        double robotX = mModel.getRobotPositionX();
+        double robotY = mModel.getRobotPositionY();
 
-            mRobotX.setText(String.format("%.2f", robotX));
-            mRobotY.setText(String.format("%.2f", robotY));
-        }
+        mRobotX.setText(String.format("%.2f", robotX));
+        mRobotY.setText(String.format("%.2f", robotY));
     }
 }
