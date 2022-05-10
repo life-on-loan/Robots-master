@@ -18,7 +18,7 @@ import static constants.TextConstants.*;
 public class MainApplicationFrame extends JFrame {
     private GameModel model = new GameModel();
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private final InfoWindow infoWindow = new InfoWindow(model);
+    private final InfoWindow infoWindow = new InfoWindow(model,desktopPane);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
     private final GameWindow gameWindow = new GameWindow(model);
     private final FrameStateHandler frameStateHandler = new FrameStateHandler();
@@ -36,8 +36,11 @@ public class MainApplicationFrame extends JFrame {
         setJMenuBar(createMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter windowAdapter = new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent event) {
+                event.getWindow().setAlwaysOnTop(true);
                 showConfirmationClosing(event);
+                event.getWindow().setAlwaysOnTop(false);
             }
         };
         addWindowListener(windowAdapter);
@@ -63,8 +66,6 @@ public class MainApplicationFrame extends JFrame {
             gameWindow.setSize(400, 400);
             desktopPane.add(gameWindow).setVisible(true);
 
-            infoWindow.pack();
-            infoWindow.setVisible(true);
             infoWindow.setAlwaysOnTop(true);
             infoWindow.setBounds(400, 50, 210, 110);
         }

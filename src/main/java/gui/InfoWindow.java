@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -14,8 +15,8 @@ public class InfoWindow extends JDialog implements Observer {
     private final Label mRobotX = new Label();
     private final Label mRobotY = new Label();
 
-    public InfoWindow(GameModel model) {
-        super();
+    public InfoWindow(GameModel model, JDesktopPane desktopPane) {
+        super((JFrame) SwingUtilities.getWindowAncestor(desktopPane), "Координаты");
         setName(FrameNames.INFO_WINDOW.getName());
 
         mModel = model;
