@@ -2,7 +2,6 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 

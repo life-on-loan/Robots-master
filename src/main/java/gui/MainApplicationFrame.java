@@ -18,10 +18,10 @@ import static constants.TextConstants.*;
 public class MainApplicationFrame extends JFrame {
     private GameModel model = new GameModel();
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private final InfoWindow infoWindow = new InfoWindow(model,desktopPane);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
     private final GameWindow gameWindow = new GameWindow(model);
     private final FrameStateHandler frameStateHandler = new FrameStateHandler();
+    private InfoWindow infoWindow;
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge of the screen.
@@ -38,9 +38,7 @@ public class MainApplicationFrame extends JFrame {
         WindowAdapter windowAdapter = new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
-                event.getWindow().setAlwaysOnTop(true);
                 showConfirmationClosing(event);
-                event.getWindow().setAlwaysOnTop(false);
             }
         };
         addWindowListener(windowAdapter);
@@ -52,6 +50,7 @@ public class MainApplicationFrame extends JFrame {
     private void loadFrames() {
         List<FrameProperties> frameProperties = frameStateHandler.loadProperties();
         if (frameProperties != null) {
+            infoWindow = new InfoWindow(model, desktopPane);
             for (FrameProperties properties : frameProperties) {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
@@ -66,7 +65,7 @@ public class MainApplicationFrame extends JFrame {
             gameWindow.setSize(400, 400);
             desktopPane.add(gameWindow).setVisible(true);
 
-            infoWindow.setAlwaysOnTop(true);
+            infoWindow = new InfoWindow(model, desktopPane);
             infoWindow.setBounds(400, 50, 210, 110);
         }
     }
@@ -89,8 +88,7 @@ public class MainApplicationFrame extends JFrame {
     private void setupFrame(JDialog frame, FrameProperties properties) {
         frame.pack();
         frame.setVisible(true);
-        frame.setAlwaysOnTop(true);
-        frame.setBounds(properties.getX(),properties.getY(),properties.getWidth(),properties.getHeight());
+        frame.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
     }
 
     /**
@@ -223,6 +221,7 @@ public class MainApplicationFrame extends JFrame {
      * Метод, показывающий окошко согласия на закрытие программы
      */
     private void showConfirmationClosing(WindowEvent event) {
+        event.getWindow().setAlwaysOnTop(true);
         UIManager.put("OptionPane.yesButtonText", "Да");
         UIManager.put("OptionPane.noButtonText", "Нет");
         int select = JOptionPane.showConfirmDialog(
@@ -233,6 +232,7 @@ public class MainApplicationFrame extends JFrame {
             event.getWindow().setVisible(false);
             System.exit(0);
         }
+        event.getWindow().setAlwaysOnTop(false);
     }
 
     private void setLookAndFeel(String className) {
