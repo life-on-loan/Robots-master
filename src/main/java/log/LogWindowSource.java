@@ -1,9 +1,6 @@
 package log;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -63,19 +60,23 @@ public class LogWindowSource {
 
     /**
      * Возвращает итератор по сообщениям в заданном диапазоне
-     *
      * @param startFrom - индекс начала сообщений
      * @param count     - количество сообщений для отображения
      */
-    public Iterable<LogEntry> range(int startFrom, int count) {
+    public Iterator range(int startFrom, int count) {
         if (startFrom < 0 || startFrom >= m_messages.size()) {
-            return Collections.emptyList();
+            return null;
         }
-        return new ArrayList<>(m_messages.subList(startFrom, Math.min(startFrom + count, m_messages.size())));
+        int indexTo = Math.min(startFrom + count, m_messages.size());
+        List messages = new ArrayList(m_messages.subList(startFrom, indexTo));
+        return messages.iterator();
     }
 
     /**
      * Возвращает итератор по всем хранимым сообщениям
      */
-    public Iterable<LogEntry> all() { return new ArrayList<>(m_messages); }
+    public Iterator all() {
+        List messages = new ArrayList(m_messages);
+        return messages.iterator();
+    }
 }
