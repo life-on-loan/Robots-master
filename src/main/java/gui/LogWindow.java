@@ -3,7 +3,6 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.TextArea;
-import java.util.Iterator;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -43,9 +42,8 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
 
     private void updateLogContent() {
         StringBuilder content = new StringBuilder();
-        Iterator<LogEntry> entryIterator = m_logSource.all();
-        while (entryIterator.hasNext()) {
-            content.append(entryIterator.next().getMessage()).append("\n");
+        for (LogEntry entry : m_logSource.all()) {
+            content.append(entry.getMessage()).append("\n");
         }
         m_logContent.setText(content.toString());
         m_logContent.invalidate();

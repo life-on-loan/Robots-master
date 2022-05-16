@@ -3,6 +3,8 @@ package log;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static java.util.Collections.synchronizedList;
+
 /**
  * Класс, отвечающий за данные для окна логов
  */
@@ -13,6 +15,9 @@ public class LogWindowSource {
     /** Структура данных, отвечающая за хранение сообщений */
     private final LinkedList<LogEntry> m_messages;
 
+    /** Оболочка над структурой хранения сообщений, обеспечивающая синхронизированный доступ к ней */
+    private List<LogEntry> syncMessages;
+
     /** Подписчики на событие изменения данных */
     private final List<LogChangeListener> m_listeners;
 
@@ -20,6 +25,7 @@ public class LogWindowSource {
         m_iQueueLength = iQueueLength;
         m_messages = new LinkedList<LogEntry>();
         m_listeners = new CopyOnWriteArrayList<>();
+        syncMessages = synchronizedList(m_messages);
     }
 
     /**
@@ -59,24 +65,32 @@ public class LogWindowSource {
     public int size() { return m_messages.size(); }
 
     /**
-     * Возвращает итератор по сообщениям в заданном диапазоне
+     * Возвращает сообщения из заданного диапазона
      * @param startFrom - индекс начала сообщений
      * @param count     - количество сообщений для отображения
      */
-    public Iterator range(int startFrom, int count) {
-        if (startFrom < 0 || startFrom >= m_messages.size()) {
-            return null;
+    public Iterable<LogEntry> range(int startFrom, int count) {
+        List result = new ArrayList();
+        synchronized (syncMessages) {
+            if (startFrom < 0 || startFrom >= syncMessages.size()) {
+                return null;
+            }
+            int indexTo = Math.min(startFrom + count, syncMessages.size());
+            result.addAll(syncMessages.subList(startFrom, indexTo));
         }
-        int indexTo = Math.min(startFrom + count, m_messages.size());
-        List messages = new ArrayList(m_messages.subList(startFrom, indexTo));
-        return messages.iterator();
+        return result;
     }
 
     /**
-     * Возвращает итератор по всем хранимым сообщениям
+     * Возвращает все хранимые сообщения
      */
-    public Iterator all() {
-        List messages = new ArrayList(m_messages);
-        return messages.iterator();
+    public Iterable<LogEntry> all() {
+        List result = new ArrayList();
+        synchronized (syncMessages) {
+            Iterator i = syncMessages.iterator();
+            while (i.hasNext())
+                result.add(i.next());
+        }
+        return result;
     }
 }
