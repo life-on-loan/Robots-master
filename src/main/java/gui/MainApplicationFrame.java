@@ -221,7 +221,6 @@ public class MainApplicationFrame extends JFrame {
      * Метод, показывающий окошко согласия на закрытие программы
      */
     private void showConfirmationClosing(WindowEvent event) {
-        event.getWindow().setAlwaysOnTop(true);
         UIManager.put("OptionPane.yesButtonText", "Да");
         UIManager.put("OptionPane.noButtonText", "Нет");
         int select = JOptionPane.showConfirmDialog(
@@ -232,7 +231,6 @@ public class MainApplicationFrame extends JFrame {
             event.getWindow().setVisible(false);
             System.exit(0);
         }
-        event.getWindow().setAlwaysOnTop(false);
     }
 
     private void setLookAndFeel(String className) {
