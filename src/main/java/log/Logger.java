@@ -8,7 +8,7 @@ public final class Logger
     static {
         defaultLogSource = new LogWindowSource(4);
     }
-    /** Поле атомарного номера сообщения */
+    /** Поле номера сообщения, которое потокобезопасно изменяется, удобно для отладки и не несет смысловую нагрузку  */
     private static final AtomicInteger messageNumber = new AtomicInteger(0);
     
     private Logger()

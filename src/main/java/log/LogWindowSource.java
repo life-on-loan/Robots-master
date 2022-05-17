@@ -13,19 +13,15 @@ public class LogWindowSource {
     private final int m_iQueueLength;
 
     /** Структура данных, отвечающая за хранение сообщений */
-    private final LinkedList<LogEntry> m_messages;
-
-    /** Оболочка над структурой хранения сообщений, обеспечивающая синхронизированный доступ к ней */
-    private List<LogEntry> syncMessages;
+    private final LoggingStructure m_messages;
 
     /** Подписчики на событие изменения данных */
     private final List<LogChangeListener> m_listeners;
 
     public LogWindowSource(int iQueueLength) {
         m_iQueueLength = iQueueLength;
-        m_messages = new LinkedList<LogEntry>();
+        m_messages = new LoggingStructure(iQueueLength);
         m_listeners = new CopyOnWriteArrayList<>();
-        syncMessages = synchronizedList(m_messages);
     }
 
     /**
@@ -49,20 +45,17 @@ public class LogWindowSource {
      * @param logLevel   - уровень сообщения
      * @param strMessage - содержание сообщения
      */
-    public synchronized void append(LogLevel logLevel, String strMessage) {
+    public void append(LogLevel logLevel, String strMessage) {
         LogEntry entry = new LogEntry(logLevel, strMessage);
-        if (size() == m_iQueueLength)
-            m_messages.removeFirst();
-        m_messages.addLast(entry);
+        try {
+            m_messages.addWithRemoveOldMessage(entry);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for (LogChangeListener listener : m_listeners) {
             listener.onLogChanged();
         }
     }
-
-    /**
-     * Возвращает количество хранимых сообщений
-     */
-    public int size() { return m_messages.size(); }
 
     /**
      * Возвращает сообщения из заданного диапазона
@@ -70,27 +63,17 @@ public class LogWindowSource {
      * @param count     - количество сообщений для отображения
      */
     public Iterable<LogEntry> range(int startFrom, int count) {
-        List result = new ArrayList();
-        synchronized (syncMessages) {
-            if (startFrom < 0 || startFrom >= syncMessages.size()) {
-                return null;
-            }
-            int indexTo = Math.min(startFrom + count, syncMessages.size());
-            result.addAll(syncMessages.subList(startFrom, indexTo));
+        if (startFrom < 0 || startFrom >= m_messages.size()) {
+            return Collections.emptyList();
         }
-        return result;
+        int indexTo = Math.min(startFrom + count, m_messages.size());
+        return m_messages.subList(startFrom, indexTo);
     }
 
     /**
      * Возвращает все хранимые сообщения
      */
     public Iterable<LogEntry> all() {
-        List result = new ArrayList();
-        synchronized (syncMessages) {
-            Iterator i = syncMessages.iterator();
-            while (i.hasNext())
-                result.add(i.next());
-        }
-        return result;
+        return m_messages;
     }
 }
