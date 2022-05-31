@@ -36,6 +36,18 @@ public class FrameProperties {
         );
     }
 
+    static FrameProperties createFrameProperties(JDialog frame) {
+        return new FrameProperties(
+                FrameNames.getTypeByFrameName(frame.getName()),
+                frame.getX(),
+                frame.getY(),
+                frame.getWidth(),
+                frame.getHeight(),
+                false,
+                false
+        );
+    }
+
     private FrameProperties(FrameNames frameName, int x, int y, int width, int height, boolean isIcon, boolean isMaximum) {
         this.frameName = frameName;
         this.x = x;

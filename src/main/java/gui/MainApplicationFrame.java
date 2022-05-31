@@ -16,10 +16,12 @@ import utils.FrameStateHandler;
 import static constants.TextConstants.*;
 
 public class MainApplicationFrame extends JFrame {
+    private GameModel model = new GameModel();
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-    private final GameWindow gameWindow = new GameWindow();
+    private final GameWindow gameWindow = new GameWindow(model);
     private final FrameStateHandler frameStateHandler = new FrameStateHandler();
+    private InfoWindow infoWindow;
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge of the screen.
@@ -34,6 +36,7 @@ public class MainApplicationFrame extends JFrame {
         setJMenuBar(createMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter windowAdapter = new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent event) {
                 showConfirmationClosing(event);
             }
@@ -46,11 +49,13 @@ public class MainApplicationFrame extends JFrame {
      */
     private void loadFrames() {
         List<FrameProperties> frameProperties = frameStateHandler.loadProperties();
+        infoWindow = new InfoWindow(model, desktopPane);
         if (frameProperties != null) {
             for (FrameProperties properties : frameProperties) {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
                     case LOG_WINDOW -> setupFrame(logWindow, properties);
+                    case INFO_WINDOW -> setupFrame(infoWindow, properties);
                 }
             }
         } else {
@@ -59,6 +64,8 @@ public class MainApplicationFrame extends JFrame {
 
             gameWindow.setSize(400, 400);
             desktopPane.add(gameWindow).setVisible(true);
+
+            infoWindow.setBounds(400, 50, 210, 110);
         }
     }
 
@@ -77,13 +84,20 @@ public class MainApplicationFrame extends JFrame {
         }
     }
 
+    private void setupFrame(JDialog frame, FrameProperties properties) {
+        frame.pack();
+        frame.setVisible(true);
+        frame.setBounds(properties.getX(), properties.getY(), properties.getWidth(), properties.getHeight());
+    }
+
     /**
      * Метод, сохраняющий положения окон
      */
     private void saveFrames() {
         List<FrameProperties> properties = List.of(
                 FrameProperties.createFrameProperties(logWindow),
-                FrameProperties.createFrameProperties(gameWindow)
+                FrameProperties.createFrameProperties(gameWindow),
+                FrameProperties.createFrameProperties(infoWindow)
         );
 
         frameStateHandler.write(properties);
