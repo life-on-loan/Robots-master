@@ -16,7 +16,6 @@ import javax.swing.*;
 import log.Logger;
 import utils.FrameStateHandler;
 
-import static constants.TextConstants.*;
 
 public class MainApplicationFrame extends JFrame {
     private LanguageManager m_languageManager = new LanguageManager();
