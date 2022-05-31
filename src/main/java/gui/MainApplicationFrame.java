@@ -49,8 +49,8 @@ public class MainApplicationFrame extends JFrame {
      */
     private void loadFrames() {
         List<FrameProperties> frameProperties = frameStateHandler.loadProperties();
+        infoWindow = new InfoWindow(model, desktopPane);
         if (frameProperties != null) {
-            infoWindow = new InfoWindow(model, desktopPane);
             for (FrameProperties properties : frameProperties) {
                 switch (properties.getFrameName()) {
                     case GAME_WINDOW -> setupFrame(gameWindow, properties);
@@ -65,7 +65,6 @@ public class MainApplicationFrame extends JFrame {
             gameWindow.setSize(400, 400);
             desktopPane.add(gameWindow).setVisible(true);
 
-            infoWindow = new InfoWindow(model, desktopPane);
             infoWindow.setBounds(400, 50, 210, 110);
         }
     }
