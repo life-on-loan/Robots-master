@@ -7,6 +7,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
 import java.util.List;
+import java.util.Locale;
+
+import localization.LanguageManager;
 
 import javax.swing.*;
 
@@ -16,9 +19,10 @@ import utils.FrameStateHandler;
 import static constants.TextConstants.*;
 
 public class MainApplicationFrame extends JFrame {
+    private LanguageManager m_languageManager = new LanguageManager();
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-    private final GameWindow gameWindow = new GameWindow();
+    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), m_languageManager);
+    private final GameWindow gameWindow = new GameWindow(m_languageManager);
     private final FrameStateHandler frameStateHandler = new FrameStateHandler();
 
     public MainApplicationFrame() {
@@ -34,8 +38,9 @@ public class MainApplicationFrame extends JFrame {
         setJMenuBar(createMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter windowAdapter = new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent event) {
-                showConfirmationClosing(event);
+                showConfirmationClosing(m_languageManager, event);
             }
         };
         addWindowListener(windowAdapter);
@@ -94,7 +99,6 @@ public class MainApplicationFrame extends JFrame {
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug(MES_PROTOCOL_WORK);
     }
 
     /**
@@ -106,11 +110,32 @@ public class MainApplicationFrame extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu lookAndFeelMenu = createLookAndFeelMenu();
         JMenu testMenu = createTestMenu();
-        JMenu exitMenu = createExitMenu();
+        JMenu languageMenu = createLanguageMenu();
+        menuBar.add(languageMenu);
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
-        menuBar.add(exitMenu);
         return menuBar;
+    }
+
+    private JMenu createLanguageMenu() {
+        JMenu languageMenu = createNewJMenu("languageMenu.text", KeyEvent.VK_V,
+                "languageMenu.description", m_languageManager);
+        {
+            JMenuItem english = createNewJMenuItem("languageMenu.english", KeyEvent.VK_E,
+                    e -> {
+                        m_languageManager.changeLocale(new Locale("en", "US"));
+                    });
+            languageMenu.add(english);
+        }
+
+        {
+            JMenuItem russian = createNewJMenuItem("languageMenu.russian", KeyEvent.VK_E,
+                    e -> {
+                        m_languageManager.changeLocale(new Locale("ru", "RU"));
+                    });
+            languageMenu.add(russian);
+        }
+        return languageMenu;
     }
 
     /**
@@ -122,8 +147,10 @@ public class MainApplicationFrame extends JFrame {
      * @return пункт вложенного меню
      */
     private JMenuItem createNewJMenuItem(String itemText, int keyEvent, ActionListener listener) {
-        JMenuItem newItem = new JMenuItem(itemText, keyEvent);
+        JMenuItem newItem = new JMenuItem();
+        newItem.setMnemonic(keyEvent);
         newItem.addActionListener(listener);
+        m_languageManager.bindField(itemText, newItem::setText);
         return newItem;
     }
 
@@ -135,10 +162,11 @@ public class MainApplicationFrame extends JFrame {
      * @param accessibleDescription - общее описание вложенного меню
      * @return вложенное меню
      */
-    private JMenu createNewJMenu(String title, int keyEvent, String accessibleDescription) {
-        JMenu newMenuBar = new JMenu(title);
+    private JMenu createNewJMenu(String title, int keyEvent, String accessibleDescription, LanguageManager languageManager) {
+        JMenu newMenuBar = new JMenu();
+        languageManager.bindField(title, newMenuBar::setText);
         newMenuBar.setMnemonic(keyEvent);
-        newMenuBar.getAccessibleContext().setAccessibleDescription(accessibleDescription);
+        languageManager.bindField(accessibleDescription, newMenuBar.getAccessibleContext()::setAccessibleDescription);
         return newMenuBar;
     }
 
@@ -148,24 +176,17 @@ public class MainApplicationFrame extends JFrame {
      * @return вложенное меню режимов отображения
      */
     private JMenu createLookAndFeelMenu() {
-        JMenu lookAndFeelMenu = createNewJMenu(MES_MODE_MAPPING, KeyEvent.VK_V,
-                MES_MANAGEMENT_MODE_MAPPING);
-
+        JMenu lookAndFeelMenu = createNewJMenu("lookAndFeelMenu.text", KeyEvent.VK_V,
+                "lookAndFeelMenu.description",m_languageManager);
         {
-            JMenuItem systemLookAndFeel = createNewJMenuItem(SYSTEM_SCHEME, KeyEvent.VK_S,
-                    (event) -> {
-                        setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                        this.invalidate();
-                    });
+            JMenuItem systemLookAndFeel = createNewJMenuItem("lookAndFeelMenu.system", KeyEvent.VK_S,
+                    e -> setLookAndFeel(UIManager.getSystemLookAndFeelClassName()));
             lookAndFeelMenu.add(systemLookAndFeel);
         }
 
         {
-            JMenuItem crossplatformLookAndFeel = createNewJMenuItem(UNIVERSAL_SCHEME, KeyEvent.VK_S,
-                    (event) -> {
-                        setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                        this.invalidate();
-                    });
+            JMenuItem crossplatformLookAndFeel = createNewJMenuItem("lookAndFeelMenu.universal", KeyEvent.VK_S,
+                    e -> setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()));
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
         return lookAndFeelMenu;
@@ -177,40 +198,32 @@ public class MainApplicationFrame extends JFrame {
      * @return вложенное меню тестов
      */
     private JMenu createTestMenu() {
-        JMenu testMenu = createNewJMenu(TESTS, KeyEvent.VK_T, TESTS_COMMANDS);
+        JMenu testMenu = createNewJMenu("testMenu.text", KeyEvent.VK_T,
+                "testMenu.description", m_languageManager);
         {
-            JMenuItem addLogMessageItem = createNewJMenuItem(MES_TO_LOG, KeyEvent.VK_S, (event) -> Logger.debug(NEW_STRING));
+            JMenuItem addLogMessageItem = createNewJMenuItem(
+                    "testMenu.sendMessage", KeyEvent.VK_S, e -> Logger.debug("newString"));
             testMenu.add(addLogMessageItem);
         }
         return testMenu;
     }
 
-    /**
-     * Метод создания меню для выхода
-     *
-     * @return вложенное меню выхода
-     */
-    private JMenu createExitMenu() {
-        JMenu exitMenu = new JMenu(CLOSE);
-        exitMenu.setMnemonic(KeyEvent.VK_Q);
-        {
-            JMenuItem addExitMessageItem = new JMenuItem(EXIT, KeyEvent.VK_Q);
-            addExitMessageItem.addActionListener((event) -> Toolkit.getDefaultToolkit()
-                    .getSystemEventQueue().postEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
-            exitMenu.add(addExitMessageItem);
-        }
-        return exitMenu;
-    }
 
     /**
      * Метод, показывающий окошко согласия на закрытие программы
      */
-    private void showConfirmationClosing(WindowEvent event) {
-        UIManager.put("OptionPane.yesButtonText", "Да");
-        UIManager.put("OptionPane.noButtonText", "Нет");
-        int select = JOptionPane.showConfirmDialog(
-                event.getWindow(), QUESTION_EXIT, PROGRAM,
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+    private void showConfirmationClosing(LanguageManager languageManager, WindowEvent event) {
+        int select = JOptionPane.showOptionDialog(this,
+                languageManager.getString("confirmDialog.message"),
+                languageManager.getString("confirmDialog.title"),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                new Object[]{
+                        languageManager.getString("confirmDialog.yes"),
+                        languageManager.getString("confirmDialog.no")
+                },
+                JOptionPane.NO_OPTION);
         if (select == 0) {
             saveFrames();
             event.getWindow().setVisible(false);

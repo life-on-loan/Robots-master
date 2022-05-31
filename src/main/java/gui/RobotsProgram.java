@@ -1,5 +1,7 @@
 package gui;
 
+import localization.LanguageManager;
+
 import java.awt.Frame;
 
 import javax.swing.SwingUtilities;
