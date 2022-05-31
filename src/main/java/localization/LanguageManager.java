@@ -4,15 +4,13 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class LanguageManager {
-
     private static final String resource = "LanguageResource";
-
     private final List<ResourceItem> items;
     private static ResourceBundle resourceBundle;
 
     public LanguageManager() {
         items = new LinkedList<>();
-        resourceBundle = ResourceBundle.getBundle("LanguageResource", Locale.getDefault());
+        resourceBundle = ResourceBundle.getBundle(resource, Locale.getDefault());
     }
     public Locale getLocale(){
         return Locale.getDefault();
@@ -36,7 +34,7 @@ public class LanguageManager {
 
     public void changeLocale(Locale locale) {
         setLocale(locale);
-        resourceBundle = ResourceBundle.getBundle("LanguageResource", locale);
+        resourceBundle = ResourceBundle.getBundle(resource, locale);
         items.forEach(this::updateItem);
     }
 
@@ -46,7 +44,6 @@ public class LanguageManager {
     }
 
     private static class ResourceItem {
-
         private final String key;
         private final Consumer<String> setter;
 
